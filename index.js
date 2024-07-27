@@ -1,18 +1,14 @@
 const express = require('express');
-const yaml_config = require('node-yaml-config');
 const { connect } = require('./db/index');
-const { sendEmail } = require('./services/emailService');
 const sesssion = require('express-session');
 const MongoStore = require('connect-mongo');
+const config = require('./services/configService');
 
 const startServer = async () => {
     try {
         const app = express();
 
-        const ENVIRONMENT = process.env.ENVIRONMENT || 'development';
-        const config = yaml_config.load(__dirname + '/config/config.yaml', ENVIRONMENT);
-
-        const db = await connect(config.database.uri);
+        await connect(config.database.uri);
         console.log('Connected to database.');
 
         app.use(sesssion({
@@ -41,14 +37,4 @@ const startServer = async () => {
     }
 }
 
-startServer()
-    // .then(() => {
-    //     sendEmail({
-    //         // to: 'tohienvinh@gmail.com',
-    //         tos: ['tohienvinh@gmail.com', 'ezionoir@outlook.com'],
-    //         details: {
-    //             time: Date.now(),
-    //             suspectedThreats: ['DDOS', 'DOS']
-    //         }
-    //     });
-    // });
+startServer();
